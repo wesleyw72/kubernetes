@@ -427,9 +427,9 @@ func TestPodLogDirectoryGC(t *testing.T) {
 	// pod log directories without corresponding pods should be removed.
 	files := []string{"123", "456", "789", "012", "name_namespace_321", "name_namespace_654"}
 	removed := []string{
-		filepath.Join(podLogsRootDirectory, "789"),
-		filepath.Join(podLogsRootDirectory, "012"),
-		filepath.Join(podLogsRootDirectory, "name_namespace_654"),
+		filepath.Join(fakePodLogsRootDirectory, "789"),
+		filepath.Join(fakePodLogsRootDirectory, "012"),
+		filepath.Join(fakePodLogsRootDirectory, "name_namespace_654"),
 	}
 	podStateProvider.removed["012"] = struct{}{}
 	podStateProvider.removed["789"] = struct{}{}

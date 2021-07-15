@@ -59,8 +59,6 @@ import (
 const (
 	// The api version of kubelet runtime api
 	kubeRuntimeAPIVersion = "0.1.0"
-	// The root directory for pod logs
-	podLogsRootDirectory = "/var/log/pods"
 	// A minimal shutdown window for avoiding unnecessary SIGKILLs
 	minimumGracePeriodInSeconds = 2
 
@@ -155,6 +153,9 @@ type kubeGenericRuntimeManager struct {
 
 	// Memory throttling factor for MemoryQoS
 	memoryThrottlingFactor float64
+
+	// The root directory for pod logs
+	podLogsRootDirectory string
 }
 
 // KubeGenericRuntime is a interface contains interfaces for container runtime and command.
@@ -200,6 +201,7 @@ func NewKubeGenericRuntimeManager(
 	memorySwapBehavior string,
 	getNodeAllocatable func() v1.ResourceList,
 	memoryThrottlingFactor float64,
+	podLogsRootDirectory string,
 ) (KubeGenericRuntime, error) {
 	kubeRuntimeManager := &kubeGenericRuntimeManager{
 		recorder:               recorder,
@@ -223,6 +225,7 @@ func NewKubeGenericRuntimeManager(
 		memorySwapBehavior:     memorySwapBehavior,
 		getNodeAllocatable:     getNodeAllocatable,
 		memoryThrottlingFactor: memoryThrottlingFactor,
+		podLogsRootDirectory: podLogsRootDirectory,
 	}
 
 	typedVersion, err := kubeRuntimeManager.getTypedVersion()

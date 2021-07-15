@@ -330,9 +330,9 @@ func (cgc *containerGC) evictPodLogsDirectories(allSourcesReady bool) error {
 	osInterface := cgc.manager.osInterface
 	if allSourcesReady {
 		// Only remove pod logs directories when all sources are ready.
-		dirs, err := osInterface.ReadDir(podLogsRootDirectory)
+		dirs, err := osInterface.ReadDir(cgc.manager.podLogsRootDirectory)
 		if err != nil {
-			return fmt.Errorf("failed to read podLogsRootDirectory %q: %v", podLogsRootDirectory, err)
+			return fmt.Errorf("failed to read podLogsRootDirectory %q: %v", cgc.manager.podLogsRootDirectory, err)
 		}
 		for _, dir := range dirs {
 			name := dir.Name()
@@ -341,7 +341,7 @@ func (cgc *containerGC) evictPodLogsDirectories(allSourcesReady bool) error {
 				continue
 			}
 			klog.V(4).InfoS("Removing pod logs", "podUID", podUID)
-			err := osInterface.RemoveAll(filepath.Join(podLogsRootDirectory, name))
+			err := osInterface.RemoveAll(filepath.Join(cgc.manager.podLogsRootDirectory, name))
 			if err != nil {
 				klog.ErrorS(err, "Failed to remove pod logs directory", "path", name)
 			}

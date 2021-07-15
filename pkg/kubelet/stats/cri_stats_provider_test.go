@@ -191,16 +191,17 @@ func TestCRIListPodStats(t *testing.T) {
 		EphemeralVolumes:  ephemeralVolumes,
 		PersistentVolumes: persistentVolumes,
 	}
+	podLogPath := "/var/log/pods"
 
 	fakeStats := map[string]*volume.Metrics{
-		kuberuntime.BuildContainerLogsDirectory("sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid"), cName0):               containerLogStats0,
-		kuberuntime.BuildContainerLogsDirectory("sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid"), cName1):               containerLogStats1,
-		kuberuntime.BuildContainerLogsDirectory("sandbox1-ns", "sandbox1-name", types.UID("sandbox1-uid"), cName2):               containerLogStats2,
-		kuberuntime.BuildContainerLogsDirectory("sandbox2-ns", "sandbox2-name", types.UID("sandbox2-uid"), cName3):               containerLogStats4,
-		kuberuntime.BuildContainerLogsDirectory("sandbox3-ns", "sandbox3-name", types.UID("sandbox3-uid"), cName5):               containerLogStats5,
-		kuberuntime.BuildContainerLogsDirectory("sandbox3-ns", "sandbox3-name", types.UID("sandbox3-uid"), cName8):               containerLogStats8,
-		filepath.Join(kuberuntime.BuildPodLogsDirectory("sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid")), podLogName0): podLogStats0,
-		filepath.Join(kuberuntime.BuildPodLogsDirectory("sandbox1-ns", "sandbox1-name", types.UID("sandbox1-uid")), podLogName1): podLogStats1,
+		kuberuntime.BuildContainerLogsDirectory(podLogPath, "sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid"), cName0):               containerLogStats0,
+		kuberuntime.BuildContainerLogsDirectory(podLogPath, "sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid"), cName1):               containerLogStats1,
+		kuberuntime.BuildContainerLogsDirectory(podLogPath, "sandbox1-ns", "sandbox1-name", types.UID("sandbox1-uid"), cName2):               containerLogStats2,
+		kuberuntime.BuildContainerLogsDirectory(podLogPath, "sandbox2-ns", "sandbox2-name", types.UID("sandbox2-uid"), cName3):               containerLogStats4,
+		kuberuntime.BuildContainerLogsDirectory(podLogPath, "sandbox3-ns", "sandbox3-name", types.UID("sandbox3-uid"), cName5):               containerLogStats5,
+		kuberuntime.BuildContainerLogsDirectory(podLogPath, "sandbox3-ns", "sandbox3-name", types.UID("sandbox3-uid"), cName8):               containerLogStats8,
+		filepath.Join(kuberuntime.BuildPodLogsDirectory(podLogPath, "sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid")), podLogName0): podLogStats0,
+		filepath.Join(kuberuntime.BuildPodLogsDirectory(podLogPath, "sandbox1-ns", "sandbox1-name", types.UID("sandbox1-uid")), podLogName1): podLogStats1,
 	}
 
 	ctrl := gomock.NewController(t)
@@ -211,9 +212,9 @@ func TestCRIListPodStats(t *testing.T) {
 		var fileInfos []os.FileInfo
 		mockFI := kubecontainertest.NewMockFileInfo(ctrl)
 		switch path {
-		case kuberuntime.BuildPodLogsDirectory("sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid")):
+		case kuberuntime.BuildPodLogsDirectory(podLogPath, "sandbox0-ns", "sandbox0-name", types.UID("sandbox0-uid")):
 			mockFI.EXPECT().Name().Return(podLogName0)
-		case kuberuntime.BuildPodLogsDirectory("sandbox1-ns", "sandbox1-name", types.UID("sandbox1-uid")):
+		case kuberuntime.BuildPodLogsDirectory(podLogPath, "sandbox1-ns", "sandbox1-name", types.UID("sandbox1-uid")):
 			mockFI.EXPECT().Name().Return(podLogName1)
 		default:
 			return nil, nil
@@ -230,7 +231,7 @@ func TestCRIListPodStats(t *testing.T) {
 		mockRuntimeCache,
 		fakeRuntimeService,
 		fakeImageService,
-		NewFakeHostStatsProviderWithData(fakeStats, fakeOS),
+		NewFakeHostStatsProviderWithData(fakeStats, fakeOS, podLogPath),
 		false,
 	)
 

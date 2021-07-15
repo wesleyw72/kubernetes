@@ -40,6 +40,7 @@ import (
 
 const (
 	fakeSeccompProfileRoot = "/fakeSeccompProfileRoot"
+	fakePodLogsRootDirectory = "/var/log/pods"
 
 	fakeNodeAllocatableMemory = "32Gi"
 	fakeNodeAllocatableCPU    = "16"
@@ -100,6 +101,7 @@ func newFakeKubeRuntimeManager(runtimeService internalapi.RuntimeService, imageS
 		logReduction:           logreduction.NewLogReduction(identicalErrorDelay),
 		logManager:             logManager,
 		memoryThrottlingFactor: 0.8,
+		podLogsRootDirectory: fakePodLogsRootDirectory,
 	}
 
 	typedVersion, err := runtimeService.Version(kubeRuntimeAPIVersion)
